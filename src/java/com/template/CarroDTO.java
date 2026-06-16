@@ -15,13 +15,9 @@ public class CarroDTO {
         this.id = id;
     }
 
-    public String getNome() {
-        return nome;
-    }
+    public String getNome() { return nome; }
 
-    public void setNome(String nome) {
-        this.nome = this.nome;
-    }
+    public void setNome(String nome) {this.nome = nome;}
 
     public int getPt_cavalos() {
         return pt_cavalos;
