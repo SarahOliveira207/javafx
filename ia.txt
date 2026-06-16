@@ -1,0 +1,140 @@
+Entendo como isso pode ser frustrante. Trabalhar com a integração entre o JavaFX, o Scene Builder e o IntelliJ muitas vezes gera esses pequenos conflitos de versão e formatação.
+
+A boa notícia é que o seu projeto não está quebrado na lógica do Java (repare que o processo terminou com exit code 0, ou seja, sem erros fatais no código). O problema real que está "congelando" o seu layout está no arquivo FXML gerado pelo Scene Builder.
+
+Vamos resolver os três avisos que apareceram no seu console, do mais crítico para o menos crítico:
+
+1. O Layout que não responde (ClassCastException no CSS)
+Este é o erro que está impedindo sua interface de aparecer ou funcionar corretamente:
+
+WARNING: Caught 'java.lang.ClassCastException... while converting value for '-fx-background-color' from inline style on AnchorPane
+
+O que aconteceu: No Scene Builder, você provavelmente digitou um valor inválido para a cor de fundo (background-color) do seu AnchorPane principal. Pode ser um nome de cor que o Java não reconhece ou um código hexadecimal sem a hashtag (ex: FF0000 em vez de #FF0000).
+
+Como corrigir:
+
+Abra o seu arquivo .fxml diretamente no IntelliJ (como texto, não no Scene Builder).
+
+Procure pela tag <AnchorPane ... >.
+
+Dentro dessa tag, procure a propriedade style="-fx-background-color: ALGUMA_COISA;".
+
+Apague essa propriedade style inteira ou corrija o valor para uma cor válida (ex: style="-fx-background-color: #FFFFFF;").
+
+Salve o arquivo.
+
+2. O Aviso de Versão do FXML
+WARNING: Loading FXML document with JavaFX API of version 26 by JavaFX runtime of version 25.0.3
+
+O que aconteceu: O seu Scene Builder está em uma versão ligeiramente mais nova (26) do que as bibliotecas JavaFX que você importou no seu projeto (25.0.3). Isso geralmente não impede o app de rodar, mas é bom alinhar para evitar bugs no layout.
+
+Como corrigir:
+
+Ainda com o arquivo .fxml aberto no IntelliJ em modo texto.
+
+Na primeira ou segunda linha, procure por: xmlns="http://javafx.com/javafx/26"
+
+Altere o 26 para 25.0.3 ou simplesmente 25.
+
+Salve o arquivo.
+
+3. O Aviso de Acesso Nativo (Native Access)
+WARNING: Use --enable-native-access=javafx.graphics to avoid a warning for callers in this module
+
+O que aconteceu: O Java JDK 22+ introduziu restrições de segurança mais rígidas para bibliotecas que acessam recursos nativos do sistema operacional (como o JavaFX faz para desenhar a interface gráfica). É apenas um aviso, mas limpa o seu console se você resolver.
+
+Como corrigir:
+
+No IntelliJ, vá na barra superior e clique em Run > Edit Configurations...
+
+Selecione a sua aplicação (Main).
+
+Encontre o campo VM options (se não estiver visível, clique em Modify options e selecione Add VM options).
+
+No campo onde você já colocou os --module-path e --add-modules, adicione o seguinte comando no final (com um espaço antes):
+--enable-native-access=javafx.graphics
+
+Clique em Apply e OK.
+
+
+
+Estamos quase lá! Note que os dois avisos anteriores (sobre a versão e o acesso nativo) sumiram. O erro atual é um "primo" do erro anterior e o motivo é praticamente o mesmo.
+
+O que significa esse novo erro
+ClassCastException: class java.lang.Double cannot be cast to class javafx.scene.paint.Paint
+
+Isso indica que, no campo de cor de fundo (-fx-background-color) do seu AnchorPane, existe um valor que o Java está interpretando como um número decimal (um Double, tipo 1.0, 123, etc.) em vez de uma cor. As cores no JavaFX precisam ser do tipo Paint (textos como red, blue ou códigos hexadecimais como #FFFFFF).
+
+Como resolver definitivamente
+Você precisará editar o arquivo FXML como texto novamente.
+
+Abra o seu arquivo .fxml no IntelliJ (certifique-se de que está vendo o código XML, e não a interface visual).
+
+Procure pela tag do seu painel principal, que começa com <AnchorPane.
+
+Procure a propriedade style= dentro dessa tag. Deve estar algo como:
+style="-fx-background-color: 123;" ou style="-fx-background-color: 1.0;"
+
+A solução mais segura: Apague a propriedade style="..." inteira dessa linha. Deixe o JavaFX usar a cor padrão.
+
+Se você realmente quiser uma cor: Troque o número por um código hexadecimal válido, incluindo a hashtag. Exemplo: style="-fx-background-color: #FFFFFF;" (para branco).
+
+Salve o arquivo e rode o projeto novamente (Shift + F10).
+
+A exclusão dessa propriedade inválida fará com que o Scene Builder e o JavaFX voltem a conseguir desenhar a sua tela corretamente, e a interface deve finalmente aparecer e responder.
+
+
+Isso é super comum. O que está acontecendo agora é que a sua interface (o arquivo FXML no Scene Builder) e o seu código (o MainController.java) não estão "conversando". Para o JavaFX saber qual botão faz o quê e qual campo de texto é qual, os nomes no Scene Builder precisam ser exatamente iguais aos que estão no código.
+
+Vamos fazer o "casamento" entre o visual e o código. Abra o seu arquivo no Scene Builder e siga este checklist passo a passo:
+
+1. Vincular o Controller
+O Scene Builder precisa saber qual classe Java controla aquela tela.
+
+No canto inferior esquerdo do Scene Builder, abra a aba Controller.
+
+No campo Controller class, digite exatamente: com.template.MainController
+
+Pressione Enter.
+
+2. Configurar os fx:id (Identificadores)
+Cada elemento da sua tela que você vai usar no código precisa ter o fx:id correspondente. Clique em cada elemento na sua tela, vá no painel da direita, abra a aba Code e preencha o campo fx:id exatamente com estes nomes (respeitando maiúsculas e minúsculas):
+
+Tabela (TableView): tblCarro
+
+Coluna ID: colId
+
+Coluna Nome: colNome
+
+Coluna Potência/Cavalos: colPotencia
+
+Coluna Cor: colCor
+
+Campo de Texto (Nome): fieldNome
+
+Campo de Texto (Cavalos): fieldCavalos
+
+Campo de Texto (Cor): fieldCor
+
+Botão Inserir: buttonInserir
+
+Botão Salvar/Editar: buttonSalvar
+
+Botão Excluir: buttonExcluir
+
+3. Configurar as Ações dos Botões (On Action)
+Agora precisamos dizer qual método é executado quando você clica em cada botão. Ainda com a aba Code (no painel da direita) aberta, selecione seus botões um por um e preencha o campo On Action:
+
+Selecione o botão de Inserir/Cadastrar -> No campo On Action digite: btnInserir
+
+Selecione o botão de Salvar/Atualizar -> No campo On Action digite: btnSalvar
+
+Selecione o botão de Excluir -> No campo On Action digite: btnExcluir
+
+4. Salvar e Recompilar
+No Scene Builder, clique em File > Save (ou Ctrl + S).
+
+Volte para o IntelliJ.
+
+Se você estiver usando o Maven ou Gradle, é uma boa ideia dar um "Rebuild" ou rodar a aplicação novamente para que o IntelliJ pegue o arquivo FXML atualizado.
+
