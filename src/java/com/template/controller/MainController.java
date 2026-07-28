@@ -1,5 +1,8 @@
-package com.template;
+package com.template.controller;
 
+import com.template.model.CarroDAO;
+import com.template.model.dto.CarroDTO;
+import com.template.util.DialogUtil;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -8,6 +11,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import static util.DialogUtil.*;
+import validator.UsuariValidator;
 
 import java.util.ArrayList;
 
@@ -26,9 +31,6 @@ public class MainController {
     @FXML private TableColumn<CarroDTO, String> colNome;
     @FXML private TableColumn<CarroDTO, Integer> colPotencia;
     @FXML private TableColumn<CarroDTO, String> colCor;
-
-
-    private CarroDTO carroSelecionado;
 
     @FXML
     private void initialize() {
@@ -60,12 +62,14 @@ public class MainController {
         CarroDAO objCarroDAO = new CarroDAO();
         objCarroDAO.inserirCarro(objCarroDTO);
 
+
         btnLimpar();
         carregarCarros();
     }
 
     @FXML
     private void btnSalvar(ActionEvent event) { // Este método atualiza os dados
+        CarroDTO carroSelecionado = new CarroDTO();
         if (carroSelecionado != null) {
             carroSelecionado.setNome(fieldNome.getText());
             carroSelecionado.setPt_cavalos(Integer.parseInt(fieldCavalos.getText()));
@@ -81,6 +85,7 @@ public class MainController {
 
     @FXML
     private void btnExcluir(ActionEvent event) {
+        CarroDTO carroSelecionado = new CarroDTO();
         if (carroSelecionado != null) {
             CarroDAO objCarroDAO = new CarroDAO();
             objCarroDAO.excluirCarro(carroSelecionado);
@@ -91,6 +96,7 @@ public class MainController {
     }
 
     private void btnCarregar(CarroDTO objCarroDTO) {
+        CarroDTO carroSelecionado = new CarroDTO();
         if (objCarroDTO != null) {
             this.carroSelecionado = objCarroDTO;
             fieldNome.setText(objCarroDTO.getNome());
@@ -100,6 +106,7 @@ public class MainController {
     }
 
     private void btnLimpar() {
+        CarroDTO carroSelecionado = new CarroDTO();
         fieldNome.clear();
         fieldCavalos.clear();
         fieldCor.clear();
