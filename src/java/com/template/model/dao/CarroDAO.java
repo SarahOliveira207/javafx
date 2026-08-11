@@ -1,5 +1,6 @@
-package com.template.model;
+package com.template.model.dao;
 
+import com.template.model.ConexaoBD;
 import com.template.model.dto.CarroDTO;
 
 import java.sql.Connection;
@@ -10,7 +11,12 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.template.util.DialogUtil.*;
+
 public class CarroDAO {
+
+    private static final Logger logger = Logger.getLogger(CarroDAO.class.getName());
+    ArrayList<CarroDTO> listaCarros = new ArrayList<>();
 
     public ArrayList<CarroDTO> listarCarro() {
         ArrayList<CarroDTO> listaCarro = new ArrayList<>();
@@ -28,8 +34,9 @@ public class CarroDAO {
                 carro.setPt_cavalos(rs.getInt("pt_cavalos"));
                 listaCarro.add(carro);
             }
-        } catch(SQLException ex) {
-            Logger.getLogger(CarroDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch(SQLException e) {
+            logger.log(Level.SEVERE,"Erro ao lista carros", e);
+            showError("Erro ao carregar lista de carros");
         }
         return listaCarro;
     }
@@ -45,8 +52,9 @@ public class CarroDAO {
             ps.setString(3, carro.getCor());
             ps.executeUpdate();
 
-        } catch(SQLException ex) {
-            Logger.getLogger(CarroDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch(SQLException e) {
+            logger.log(Level.SEVERE,"Erro ao inserir carro", e);
+            showError("Erro ao inserir carro");
         }
     }
 
@@ -60,7 +68,8 @@ public class CarroDAO {
             ps.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE,"Erro ao excluir carro", e);
+            showError("Erro ao excluir carro");
         }
     }
 
@@ -77,7 +86,8 @@ public class CarroDAO {
             ps.executeUpdate(); // Corrigido para executeUpdate
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE,"Erro ao salvar carro", e);
+            showError("Erro ao salvar carro");
         }
     }
 }
