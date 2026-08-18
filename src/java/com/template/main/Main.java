@@ -5,21 +5,27 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class Main extends Application
-{
-    @Override
-    public void start(Stage stage) throws Exception
-    {
-        FXMLLoader loader = new FXMLLoader(Main.class.getResource("main.fxml"));
-        Scene scene = new Scene(loader.load(),600,400);
+import java.io.IOException;
+import java.net.URL;
 
-        stage.setTitle("Hello");
+public class Main extends Application {
+
+    @Override
+    public void start(Stage stage) throws IOException {
+        URL fxmlLocation = getClass().getResource("/com/template/main.fxml");
+        if (fxmlLocation == null) {
+            throw new IllegalStateException("Não foi possível localizar o arquivo FXML em /com/template/main.fxml");
+        }
+
+        FXMLLoader loader = new FXMLLoader(fxmlLocation);
+        Scene scene = new Scene(loader.load(), 640, 420);
+
+        stage.setTitle("Gerenciamento de Veículos - MVC & SOLID");
         stage.setScene(scene);
         stage.show();
     }
 
-    public static void main(String[] args)
-    {
-        launch();
+    public static void main(String[] args) {
+        launch(args);
     }
 }
