@@ -13,6 +13,7 @@ public class CampoObrigatorioValidador implements Validator<String> {
     private final String nomeCampo;
     private final String valor;
 
+
     @Override
     public void reset() {
 
