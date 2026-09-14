@@ -1,9 +1,10 @@
 package com.template.controller;
 
-import com.template.exception.ValidationException;
 import com.template.model.dto.CarroDTO;
 import com.template.service.CarroService;
 import com.template.util.DialogUtil;
+import com.template.validator.CarroValidador;
+import com.template.validator.ICarroValidador;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,12 +17,18 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import java.util.List;
 
 /**
- * Controller responsável exclusivamente pela interface gráfica (View / FXML) e mediação de eventos (SRP).
- * Toda a lógica de validação é delegada a CarroValidator e a lógica de negócios a CarroService.
+ * Controller responsável pela interface gráfica JavaFX.
+ * Aplica o Princípio da Inversão de Dependência (DIP - SOLID) ao receber a interface ICarroValidador no construtor.
  */
 public class MainController {
 
-    // Elementos da Interface Gráfica (FXML)
+    // Dependência de abstração injetada via construtor (DIP)
+    private final ICarroValidador carroValidador;
+
+    // Camada de Serviço para regras de negócio e persistência
+    private final CarroService carroService;
+
+    // Elementos visuais (FXML)
     @FXML private TableView<CarroDTO> tblCarro;
     @FXML private TableColumn<CarroDTO, Integer> colId;
     @FXML private TableColumn<CarroDTO, String> colNome;
@@ -37,18 +44,24 @@ public class MainController {
     @FXML private Button buttonExcluir;
     @FXML private Button buttonAtualizar;
 
-    // Camada de Serviço (Lógica de Negócios)
-    private final CarroService carroService;
-
     // Estado do veículo selecionado na tabela
     private CarroDTO carroSelecionado;
 
-    public MainController() {
+    /**
+     * Construtor com Injeção de Dependência (DIP) recebendo a interface ICarroValidador.
+     *
+     * @param carroValidador Objeto validador implementando ICarroValidador
+     */
+    public MainController(ICarroValidador carroValidador) {
+        this.carroValidador = carroValidador;
         this.carroService = new CarroService();
     }
 
-    public MainController(CarroService carroService) {
-        this.carroService = carroService;
+    /**
+     * Construtor padrão para compatibilidade.
+     */
+    public MainController() {
+        this(new CarroValidador());
     }
 
     @FXML
@@ -58,9 +71,6 @@ public class MainController {
         carregarCarros();
     }
 
-    /**
-     * Configura o mapeamento entre as colunas da TableView e os atributos do CarroDTO.
-     */
     private void configurarColunasTabela() {
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colNome.setCellValueFactory(new PropertyValueFactory<>("nome"));
@@ -68,18 +78,12 @@ public class MainController {
         colCor.setCellValueFactory(new PropertyValueFactory<>("cor"));
     }
 
-    /**
-     * Adiciona o listener de seleção na TableView para carregar os dados nos campos de formulário.
-     */
     private void configurarSelecaoTabela() {
         tblCarro.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> preencherCampos(newValue)
         );
     }
 
-    /**
-     * Carrega e atualiza os dados da tabela buscando da camada de serviço.
-     */
     @FXML
     public void carregarCarros() {
         try {
@@ -92,9 +96,15 @@ public class MainController {
 
     /**
      * Ação do botão Inserir / Cadastrar novo veículo.
+     * Executa a validação através do objeto ICarroValidador antes de prosseguir com a lógica de negócio.
      */
     @FXML
     private void btnInserir(ActionEvent event) {
+        // Validação através da interface ICarroValidador (DIP)
+        if (!carroValidador.validarCarro(fieldNome.getText(), fieldCavalos.getText(), fieldCor.getText())) {
+            return; // Se a validação falhar, para por aqui
+        }
+
         try {
             String nome = fieldNome.getText();
             String cavalosStr = fieldCavalos.getText();
@@ -105,8 +115,6 @@ public class MainController {
 
             limparFormulario();
             carregarCarros();
-        } catch (ValidationException e) {
-            DialogUtil.showWarning(e.getMessage());
         } catch (Exception e) {
             DialogUtil.showError("Erro ao cadastrar veículo: " + e.getMessage());
         }
@@ -122,6 +130,11 @@ public class MainController {
             return;
         }
 
+        // Validação através da interface ICarroValidador (DIP)
+        if (!carroValidador.validarCarro(fieldNome.getText(), fieldCavalos.getText(), fieldCor.getText())) {
+            return;
+        }
+
         try {
             String nome = fieldNome.getText();
             String cavalosStr = fieldCavalos.getText();
@@ -132,15 +145,13 @@ public class MainController {
 
             limparFormulario();
             carregarCarros();
-        } catch (ValidationException e) {
-            DialogUtil.showWarning(e.getMessage());
         } catch (Exception e) {
             DialogUtil.showError("Erro ao atualizar veículo: " + e.getMessage());
         }
     }
 
     /**
-     * Ação do botão Excluir veículo.
+     * Ação do botão Excluir veículo selecionado.
      */
     @FXML
     private void btnExcluir(ActionEvent event) {
@@ -161,27 +172,17 @@ public class MainController {
 
                 limparFormulario();
                 carregarCarros();
-            } catch (ValidationException e) {
-                DialogUtil.showWarning(e.getMessage());
             } catch (Exception e) {
                 DialogUtil.showError("Erro ao excluir veículo: " + e.getMessage());
             }
         }
     }
 
-    /**
-     * Ação do botão Atualizar / Recarregar tabela.
-     */
     @FXML
     private void btnAtualizar(ActionEvent event) {
         carregarCarros();
     }
 
-    /**
-     * Preenche os campos do formulário quando um item é selecionado na tabela.
-     *
-     * @param carro Objeto selecionado na tabela
-     */
     private void preencherCampos(CarroDTO carro) {
         this.carroSelecionado = carro;
         if (carro != null) {
@@ -191,17 +192,11 @@ public class MainController {
         }
     }
 
-    /**
-     * Limpa os campos de entrada e remove a seleção da tabela.
-     */
     @FXML
     private void btnLimpar(ActionEvent event) {
         limparFormulario();
     }
 
-    /**
-     * Método auxiliar interno para resetar o formulário.
-     */
     private void limparFormulario() {
         this.carroSelecionado = null;
         fieldNome.clear();
