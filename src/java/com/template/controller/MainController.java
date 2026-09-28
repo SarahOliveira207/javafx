@@ -3,7 +3,6 @@ package com.template.controller;
 import com.template.model.dto.CarroDTO;
 import com.template.service.CarroService;
 import com.template.util.DialogUtil;
-import com.template.validator.CarroValidador;
 import com.template.validator.ICarroValidador;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -17,18 +16,19 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import java.util.List;
 
 /**
- * Controller responsável pela interface gráfica JavaFX.
- * Aplica o Princípio da Inversão de Dependência (DIP - SOLID) ao receber a interface ICarroValidador no construtor.
+ * Controller responsável pela interface gráfica do cadastro de veículos (MVC + FXML).
+ * Atende aos Requisitos 5 e 6: utiliza a interface ICarroValidador (e não a classe concreta)
+ * e recebe sua dependência via Injeção de Dependência através da Fábrica de Controladores.
  */
 public class MainController {
 
-    // Dependência de abstração injetada via construtor (DIP)
+    // Dependência da interface de validação injetada externamente (DIP - SOLID / Requisito 5 e 6)
     private final ICarroValidador carroValidador;
 
-    // Camada de Serviço para regras de negócio e persistência
+    // Camada de Serviço para regras de negócio e persistência (SRP)
     private final CarroService carroService;
 
-    // Elementos visuais (FXML)
+    // Elementos da interface gráfica (FXML)
     @FXML private TableView<CarroDTO> tblCarro;
     @FXML private TableColumn<CarroDTO, Integer> colId;
     @FXML private TableColumn<CarroDTO, String> colNome;
@@ -44,24 +44,18 @@ public class MainController {
     @FXML private Button buttonExcluir;
     @FXML private Button buttonAtualizar;
 
-    // Estado do veículo selecionado na tabela
+    // Referência ao veículo selecionado na tabela
     private CarroDTO carroSelecionado;
 
     /**
-     * Construtor com Injeção de Dependência (DIP) recebendo a interface ICarroValidador.
+     * Construtor com Injeção de Dependência da interface ICarroValidador (Requisito 6).
+     * O Controller NÃO instancia diretamente a classe concreta CarroValidador.
      *
-     * @param carroValidador Objeto validador implementando ICarroValidador
+     * @param carroValidador Implementação de ICarroValidador fornecida pela fábrica
      */
     public MainController(ICarroValidador carroValidador) {
         this.carroValidador = carroValidador;
         this.carroService = new CarroService();
-    }
-
-    /**
-     * Construtor padrão para compatibilidade.
-     */
-    public MainController() {
-        this(new CarroValidador());
     }
 
     @FXML
@@ -95,14 +89,14 @@ public class MainController {
     }
 
     /**
-     * Ação do botão Inserir / Cadastrar novo veículo.
-     * Executa a validação através do objeto ICarroValidador antes de prosseguir com a lógica de negócio.
+     * Ação de Cadastro (Inserir).
+     * Atende ao Requisito 5: validação realizada via ICarroValidador antes do cadastro.
      */
     @FXML
     private void btnInserir(ActionEvent event) {
-        // Validação através da interface ICarroValidador (DIP)
+        // Validação obrigatória no cadastro através da interface ICarroValidador
         if (!carroValidador.validarCarro(fieldNome.getText(), fieldCavalos.getText(), fieldCor.getText())) {
-            return; // Se a validação falhar, para por aqui
+            return; // Se a validação falhar, o fluxo é interrompido
         }
 
         try {
@@ -121,7 +115,8 @@ public class MainController {
     }
 
     /**
-     * Ação do botão Salvar / Atualizar dados do veículo selecionado.
+     * Ação de Atualização (Salvar).
+     * Atende ao Requisito 5: validação realizada via ICarroValidador antes da atualização.
      */
     @FXML
     private void btnSalvar(ActionEvent event) {
@@ -130,9 +125,9 @@ public class MainController {
             return;
         }
 
-        // Validação através da interface ICarroValidador (DIP)
+        // Validação obrigatória na atualização através da interface ICarroValidador
         if (!carroValidador.validarCarro(fieldNome.getText(), fieldCavalos.getText(), fieldCor.getText())) {
-            return;
+            return; // Se a validação falhar, o fluxo é interrompido
         }
 
         try {
@@ -151,7 +146,7 @@ public class MainController {
     }
 
     /**
-     * Ação do botão Excluir veículo selecionado.
+     * Ação de Exclusão de veículo.
      */
     @FXML
     private void btnExcluir(ActionEvent event) {
