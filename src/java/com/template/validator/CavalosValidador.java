@@ -1,8 +1,5 @@
 package com.template.validator;
 
-/**
- * Validador específico para campos numéricos de cavalos/potência (OCP / LSP).
- */
 public class CavalosValidador implements Validador<String> {
 
     private final String nomeCampo;

@@ -1,9 +1,5 @@
 package com.template.validator;
 
-/**
- * Validador para campos que requerem números inteiros positivos (como cavalos/potência, quantidade, ano, etc.).
- * Atende ao Requisito Obrigatório 2 da Atividade Avaliativa.
- */
 public class NumeroValidador implements Validador<String> {
 
     private final String nomeCampo;
