@@ -1,0 +1,224 @@
+/* ==========================================================
+   Estilo visual da aplicação de Cadastro de Veículos
+   ========================================================== */
+
+/* ---------- Base ---------- */
+.root {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 13px;
+
+    /* Paleta */
+    -cor-fundo: #f1f4f9;
+    -cor-card: #ffffff;
+    -cor-borda: #dde3ec;
+    -cor-texto: #1f2937;
+    -cor-texto-suave: #6b7280;
+    -cor-primaria: #2563eb;
+    -cor-sucesso: #16a34a;
+    -cor-perigo: #dc2626;
+
+    -fx-focus-color: -cor-primaria;
+    -fx-faint-focus-color: #2563eb22;
+}
+
+.tela {
+    -fx-background-color: -cor-fundo;
+}
+
+/* ---------- Cabeçalho ---------- */
+.titulo {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -cor-texto;
+}
+
+.subtitulo {
+    -fx-font-size: 13px;
+    -fx-text-fill: -cor-texto-suave;
+}
+
+.titulo-secao {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -cor-texto;
+}
+
+/* ---------- Cards ---------- */
+.card {
+    -fx-background-color: -cor-card;
+    -fx-background-radius: 10;
+    -fx-border-color: -cor-borda;
+    -fx-border-radius: 10;
+    -fx-padding: 18 20 18 20;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.06), 12, 0, 0, 3);
+}
+
+/* ---------- Campos ---------- */
+.rotulo {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #374151;
+}
+
+.text-field {
+    -fx-min-height: 36px;
+    -fx-pref-height: 36px;
+    -fx-background-color: #f9fafb;
+    -fx-background-radius: 6;
+    -fx-border-color: #cfd6e1;
+    -fx-border-radius: 6;
+    -fx-padding: 6 10 6 10;
+    -fx-text-fill: -cor-texto;
+    -fx-prompt-text-fill: #9ca3af;
+}
+
+.text-field:hover {
+    -fx-border-color: #9fb0c8;
+}
+
+.text-field:focused {
+    -fx-background-color: #ffffff;
+    -fx-border-color: -cor-primaria;
+    -fx-border-width: 1.5;
+}
+
+/* ---------- Botões ---------- */
+.botao {
+    -fx-pref-width: 100px;
+    -fx-min-height: 36px;
+    -fx-pref-height: 36px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-cursor: hand;
+}
+
+.botao-sucesso   { -fx-background-color: -cor-sucesso;  -fx-text-fill: white; }
+.botao-primario  { -fx-background-color: -cor-primaria; -fx-text-fill: white; }
+.botao-perigo    { -fx-background-color: -cor-perigo;   -fx-text-fill: white; }
+.botao-secundario {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cfd6e1;
+    -fx-text-fill: #374151;
+}
+
+.botao-sucesso:hover   { -fx-background-color: #15803d; }
+.botao-primario:hover  { -fx-background-color: #1d4ed8; }
+.botao-perigo:hover    { -fx-background-color: #b91c1c; }
+.botao-secundario:hover { -fx-background-color: #f3f4f6; }
+
+.botao:pressed {
+    -fx-opacity: 0.85;
+}
+
+/* Contorno visível quando o botão recebe foco via TAB */
+.botao:focused {
+    -fx-border-color: #1e3a8a;
+    -fx-border-width: 2;
+}
+
+/* ---------- Mensagens (label) ---------- */
+.mensagem {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 9 12 9 12;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+}
+
+.mensagem-sucesso {
+    -fx-text-fill: #166534;
+    -fx-background-color: #dcfce7;
+    -fx-border-color: #86efac;
+}
+
+.mensagem-erro {
+    -fx-text-fill: #991b1b;
+    -fx-background-color: #fee2e2;
+    -fx-border-color: #fca5a5;
+}
+
+/* ---------- Tabela ---------- */
+.table-view {
+    -fx-background-color: transparent;
+    -fx-border-color: -cor-borda;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-table-cell-border-color: transparent;
+    -fx-selection-bar: #dbeafe;
+    -fx-selection-bar-non-focused: #e5edfb;
+}
+
+.table-view:focused {
+    -fx-background-insets: 0;
+    -fx-border-color: -cor-primaria;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #1e293b;
+    -fx-background-radius: 6 6 0 0;
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: transparent;
+    -fx-size: 38px;
+    -fx-border-color: transparent;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #f8fafc;
+    -fx-font-weight: bold;
+}
+
+.table-row-cell {
+    -fx-cell-size: 34px;
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent transparent #eef1f5 transparent;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #f8fafc;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: #eff6ff;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #dbeafe;
+}
+
+.table-row-cell .table-cell {
+    -fx-alignment: CENTER_LEFT;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: -cor-texto;
+    -fx-padding: 0 12 0 12;
+}
+
+.table-row-cell:selected .table-cell {
+    -fx-text-fill: #1e3a8a;
+    -fx-font-weight: bold;
+}
+
+.table-view .table-row-cell .coluna-centro,
+.table-view .coluna-centro {
+    -fx-alignment: CENTER;
+}
+
+.tabela-vazia {
+    -fx-text-fill: -cor-texto-suave;
+    -fx-font-style: italic;
+}
+
+/* Barras de rolagem mais discretas */
+.table-view .scroll-bar:vertical,
+.table-view .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.table-view .scroll-bar .thumb {
+    -fx-background-color: #cbd5e1;
+    -fx-background-radius: 4;
+}

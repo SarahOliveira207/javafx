@@ -1,0 +1,38 @@
+package com.template.validator;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class CarroValidador implements ICarroValidador {
+
+    // Mensagem do último validador que falhou (exibida pelo Controller no label de mensagens)
+    private String mensagemErro = "";
+
+    @Override
+    public boolean validarCarro(String nome, String cavalos, String cor) {
+
+        List<Validador<String>> validadores = new ArrayList<>();
+
+        // Armazenando as validações dos diferentes campos (CamposObrigatoriosValidador e NumeroValidador)
+        validadores.add(new CamposObrigatoriosValidador("Nome/Modelo", nome));
+        validadores.add(new NumeroValidador("Cavalos (Potência)", cavalos));
+        validadores.add(new CamposObrigatoriosValidador("Cor", cor));
+
+        // Estrutura foreach obrigatória para percorrer os validadores (Requisito 3)
+        for (Validador<String> validador : validadores) {
+            // Utilizando os métodos definidos pela interface Validador (validar, getValor, getMensagemErro)
+            if (!validador.validar(validador.getValor())) {
+                mensagemErro = validador.getMensagemErro();
+                return false; // Interrompe na primeira validação que falhar
+            }
+        }
+
+        mensagemErro = "";
+        return true; // Todos os validadores foram atendidos com sucesso
+    }
+
+    @Override
+    public String getMensagemErro() {
+        return mensagemErro;
+    }
+}
